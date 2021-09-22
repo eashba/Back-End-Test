@@ -44,7 +44,11 @@ When getting updating an order I expect to only have to pass what has changed. H
 Additionally, when updating the items ordered, the total is not updating.
 
 ### Dev Notes / Response
+Updated the update order endpoint to only update a value if it is is passed. Otherwise, the code will not change the value. Updated code to recalculate the price if the items changed.
 
+Also made a small refactor to standardize the total price calculation, since it is used multiple times between endpoints.
+
+Assumed that the user should not be able to change the id or create date
 
 ---
 

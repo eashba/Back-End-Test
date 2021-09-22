@@ -4,6 +4,10 @@ const uuid = require('uuid').v4;
 const ordersRouter = new Router({ prefix: '/orders' });
 const ordersData = require('../lib/orders');
 
+const getTotal = (items) => {
+    return items.reduce((orderTotal, item) => orderTotal += (item.price * item.quantity), 0)
+}
+
 ordersRouter.post('/', async ctx => {
     const { customerName, items } = ctx.request.body;
 
@@ -11,7 +15,7 @@ ordersRouter.post('/', async ctx => {
         ctx.throw(409, 'No items ordered')
     }
     
-    const total = items.reduce((orderTotal, item) => orderTotal += (item.price * item.quantity), 0)
+    const total = getTotal(items)
     const order = {
         id: uuid(),
         customerName,
@@ -62,10 +66,17 @@ ordersRouter.put('/:id', async ctx => {
         ctx.throw(404, 'Could not find order');
     }
 
+    if(customerName) {
+        order.customerName = customerName;
+    }
+
+    if(items) {
+        order.items = items;
+        order.price = getTotal(order.items)
+    }
+
     const updated = {
         ...order,
-        customerName,
-        items
     }
 
     ctx.status = 200;
