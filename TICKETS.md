@@ -58,6 +58,13 @@ Assumed that the user should not be able to change the id or create date
 When  I delete an order, the order that gets deleted is never the one I expect. I know we recently changed how we are doing our deletes so I'm not sure everything got updated. But when I delete a specific order, that's usually not the one that gets deleted. Unless I delete it immediately.
 
 ### Dev Notes / Response
+I would ask QA how they had it working in the first place! When hitting the endpoint, there was an error in the code: 
+
+    ReferenceError: latest is not defined at ordersData.filter (/Users/evanashba/workspace/Back-End-Test/routes/orders.js:95:60)
+
+I fixed this error by changing that variable to reference the order that is found by id. Now, it simply 'deletes' the order with the matching id.
+
+I would follow up with QA and the manager though to confirm if this is the expected logic, or if it is supposed to work differently, since there seemed to be some confusion regarding a change.
 
 
 ---

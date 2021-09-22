@@ -86,13 +86,13 @@ ordersRouter.put('/:id', async ctx => {
 ordersRouter.delete('/:id', async ctx => {
     const { id } = ctx.params;
 
-    const order = ordersData.find(order => order.id === id);
+    const orderToDelete = ordersData.find(order => order.id === id);
 
-    if(!order) {
+    if(!orderToDelete) {
         ctx.throw(404, 'Could not find order');
     }
 
-    const remaining = ordersData.filter(({ id }) => id !== latest.id);
+    const remaining = ordersData.filter(({ id }) => id !== orderToDelete.id);
 
     ctx.status = 200;
     ctx.body = remaining;
