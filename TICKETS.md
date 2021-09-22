@@ -8,7 +8,7 @@ When getting all orders filtered by a property, the orders are not being filtere
 For query params you will want to assume `filterProperty` is "name" and `filterValue` is "Additional Topping".
 
 ### Dev Notes / Response
-
+In endpoint to filter by filterProperty and filterValue, the .filter() method needs to evaluate to true or false. This is done in the inner call on the orders, but was not being done on the outer call, which should return true if there are items present after filtering the order items on the filtered property.
 
 ---
 
