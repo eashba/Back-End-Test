@@ -8,7 +8,7 @@ When getting all orders filtered by a property, the orders are not being filtere
 For query params you will want to assume `filterProperty` is "name" and `filterValue` is "Additional Topping".
 
 ### Dev Notes / Response
-
+In endpoint to filter by filterProperty and filterValue, the .filter() method needs to evaluate to true or false. This is done in the inner call on the orders, but was not being done on the outer call, which should return true if there are items present after filtering the order items on the filtered property.
 
 ---
 
@@ -31,6 +31,7 @@ I calculated that the total should be $74.23 but I'm getting $51.28. Because tha
 All items ordered (and more) can be referenced in lib/orders.js
 
 ### Dev Notes / Response
+Issue was not because of missing hawaiian pizza, just a coincidence. When calculating total price, the method was not taking into account the quantity of each item in the order. 
 
 
 ---
@@ -43,7 +44,11 @@ When getting updating an order I expect to only have to pass what has changed. H
 Additionally, when updating the items ordered, the total is not updating.
 
 ### Dev Notes / Response
+Updated the update order endpoint to only update a value if it is is passed. Otherwise, the code will not change the value. Updated code to recalculate the price if the items changed.
 
+Also made a small refactor to standardize the total price calculation, since it is used multiple times between endpoints.
+
+Assumed that the user should not be able to change the id or create date
 
 ---
 
@@ -53,9 +58,17 @@ Additionally, when updating the items ordered, the total is not updating.
 When  I delete an order, the order that gets deleted is never the one I expect. I know we recently changed how we are doing our deletes so I'm not sure everything got updated. But when I delete a specific order, that's usually not the one that gets deleted. Unless I delete it immediately.
 
 ### Dev Notes / Response
+I would ask QA how they had it working in the first place! When hitting the endpoint, there was an error in the code: 
+
+    ReferenceError: latest is not defined at ordersData.filter (/Users/evanashba/workspace/Back-End-Test/routes/orders.js:95:60)
+
+I fixed this error by changing that variable to reference the order that is found by id. Now, it simply 'deletes' the order with the matching id.
+
+I would follow up with QA and the manager though to confirm if this is the expected logic, or if it is supposed to work differently, since there seemed to be some confusion regarding a change.
 
 
 ---
 
 
 ## Other
+Also updated the PUT and DELETE endpoints to actually update ordersData object, so the state changse are persisted while the server is still running. Not necessarily a bug considering it is a mockup app but I thought it would be cool!

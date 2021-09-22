@@ -4,6 +4,10 @@ const uuid = require('uuid').v4;
 const ordersRouter = new Router({ prefix: '/orders' });
 const ordersData = require('../lib/orders');
 
+const getTotal = (items) => {
+    return items.reduce((orderTotal, item) => orderTotal += (item.price * item.quantity), 0)
+}
+
 ordersRouter.post('/', async ctx => {
     const { customerName, items } = ctx.request.body;
 
@@ -11,7 +15,7 @@ ordersRouter.post('/', async ctx => {
         ctx.throw(409, 'No items ordered')
     }
     
-    const total = items.reduce((orderTotal, item) => orderTotal += item.price, 0)
+    const total = getTotal(items)
     const order = {
         id: uuid(),
         customerName,
@@ -21,7 +25,8 @@ ordersRouter.post('/', async ctx => {
     }
 
     ctx.status = 201;
-    ctx.body = [ ...ordersData, order ];
+    ordersData.push(order)
+    ctx.body = ordersData;
 });
 
 ordersRouter.get('/', async ctx => {
@@ -31,7 +36,7 @@ ordersRouter.get('/', async ctx => {
 
     if (filterProperty && filterValue) {
         const filteredResults = ordersData.filter(({ items }) => 
-            items.filter(item => item[filterProperty].includes(filterValue))
+            items.filter(item => item[filterProperty].includes(filterValue)).length > 0
         )
         results = filteredResults;
     }
@@ -62,10 +67,17 @@ ordersRouter.put('/:id', async ctx => {
         ctx.throw(404, 'Could not find order');
     }
 
+    if(customerName) {
+        order.customerName = customerName;
+    }
+
+    if(items) {
+        order.items = items;
+        order.price = getTotal(order.items)
+    }
+
     const updated = {
         ...order,
-        customerName,
-        items
     }
 
     ctx.status = 200;
@@ -75,16 +87,16 @@ ordersRouter.put('/:id', async ctx => {
 ordersRouter.delete('/:id', async ctx => {
     const { id } = ctx.params;
 
-    const order = ordersData.find(order => order.id === id);
+    const orderIndexToDelete = ordersData.findIndex(order => order.id === id);
 
-    if(!order) {
+    if(orderIndexToDelete === -1) {
         ctx.throw(404, 'Could not find order');
     }
 
-    const remaining = ordersData.filter(({ id }) => id !== latest.id);
+    ordersData.splice(orderIndexToDelete, 1)
 
     ctx.status = 200;
-    ctx.body = remaining;
+    ctx.body = ordersData;
 });
 
 module.exports = ordersRouter;
