@@ -31,6 +31,7 @@ I calculated that the total should be $74.23 but I'm getting $51.28. Because tha
 All items ordered (and more) can be referenced in lib/orders.js
 
 ### Dev Notes / Response
+Issue was not because of missing hawaiian pizza, just a coincidence. When calculating total price, the method was not taking into account the quantity of each item in the order. 
 
 
 ---

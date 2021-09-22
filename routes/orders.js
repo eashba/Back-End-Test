@@ -11,7 +11,7 @@ ordersRouter.post('/', async ctx => {
         ctx.throw(409, 'No items ordered')
     }
     
-    const total = items.reduce((orderTotal, item) => orderTotal += item.price, 0)
+    const total = items.reduce((orderTotal, item) => orderTotal += (item.price * item.quantity), 0)
     const order = {
         id: uuid(),
         customerName,
