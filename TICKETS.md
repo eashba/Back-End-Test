@@ -71,3 +71,4 @@ I would follow up with QA and the manager though to confirm if this is the expec
 
 
 ## Other
+Also updated the PUT and DELETE endpoints to actually update ordersData object, so the state changse are persisted while the server is still running. Not necessarily a bug considering it is a mockup app but I thought it would be cool!

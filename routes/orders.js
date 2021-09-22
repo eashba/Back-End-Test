@@ -25,7 +25,8 @@ ordersRouter.post('/', async ctx => {
     }
 
     ctx.status = 201;
-    ctx.body = [ ...ordersData, order ];
+    ordersData.push(order)
+    ctx.body = ordersData;
 });
 
 ordersRouter.get('/', async ctx => {
@@ -86,16 +87,16 @@ ordersRouter.put('/:id', async ctx => {
 ordersRouter.delete('/:id', async ctx => {
     const { id } = ctx.params;
 
-    const orderToDelete = ordersData.find(order => order.id === id);
+    const orderIndexToDelete = ordersData.findIndex(order => order.id === id);
 
-    if(!orderToDelete) {
+    if(orderIndexToDelete === -1) {
         ctx.throw(404, 'Could not find order');
     }
 
-    const remaining = ordersData.filter(({ id }) => id !== orderToDelete.id);
+    ordersData.splice(orderIndexToDelete, 1)
 
     ctx.status = 200;
-    ctx.body = remaining;
+    ctx.body = ordersData;
 });
 
 module.exports = ordersRouter;
